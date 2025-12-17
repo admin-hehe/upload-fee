@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // --- KONFIGURASI ---
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyIvtckHkcYQae3zjXjxDNvlLCU-U8j-g7cjIhl--CKKdMy_kygnDLMxnvschSPdowbXQ/exec"; 
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-purple': '#bc13fe',
+                        'neon-cyan': '#05d9e8',
+                        'cyber-bg': '#050505',
+                        'cyber-card': '#0d0d0d'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            font-family: 'Rajdhani', sans-serif;
+            color: #05d9e8;
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            overflow-x: hidden;
+        }
+
+        .neon-border {
+            border: 1px solid #bc13fe;
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.5), inset 0 0 10px rgba(188, 19, 254, 0.2);
+        }
+
+        .cyber-button {
+            background: linear-gradient(45deg, #bc13fe, #05d9e8);
+            border: none;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+            color: black;
+        }
+
+        .cyber-button:hover:not(:disabled) {
+            box-shadow: 0 0 20px rgba(5, 217, 232, 0.8);
+            transform: scale(1.02);
+            cursor: pointer;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .glitch-text {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 2px 2px #bc13fe, -2px -2px #05d9e8;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #05d9e8 !important;
+            box-shadow: 0 0 10px rgba(5, 217, 232, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="scanlines"></div>
+    
+    <div class="w-full max-w-md bg-cyber-card p-8 rounded-xl neon-border relative z-10">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold glitch-text mb-2 italic">SECURE UPLOAD</h1>
+            <p class="text-[10px] tracking-[0.3em] text-neon-purple opacity-80 uppercase font-bold">ID Node: <span id="display-id" class="text-neon-cyan">...</span></p>
+        </div>
+
+        <div id="loading-info" class="text-center py-4 italic animate-pulse text-xs">Decrypting Database...</div>
+        
+        <div id="info-container" class="hidden mb-6 space-y-2 text-sm p-4 bg-black/50 rounded-xl border border-neon-cyan/30">
+            <div class="flex justify-between border-b border-neon-cyan/10 pb-1">
+                <span class="opacity-50 text-[10px] uppercase">Kegiatan</span>
+                <span id="info-kegiatan" class="font-bold text-right text-xs"></span>
+            </div>
+            <div class="flex justify-between border-b border-neon-cyan/10 pb-1">
+                <span class="opacity-50 text-[10px] uppercase">PIC Target</span>
+                <span id="info-pic" class="font-bold text-neon-purple text-xs"></span>
+            </div>
+            <div class="flex justify-between">
+                <span class="opacity-50 text-[10px] uppercase">Budget Code</span>
+                <span id="info-harga" class="font-bold text-xs"></span>
+            </div>
+        </div>
+
+        <form id="uploadForm" class="space-y-6">
+            <input type="hidden" id="recordId" name="record_id">
+            <input type="hidden" name="action" value="uploadDocumentation">
+
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2 bg-gray-900/80 p-1.5 rounded-xl border border-white/5">
+                    <label class="flex-1 text-center cursor-pointer">
+                        <input type="radio" name="doc_type" value="text" checked class="hidden peer" onchange="toggleInput('text')">
+                        <div class="py-2 rounded-lg peer-checked:bg-neon-cyan peer-checked:text-black transition-all duration-300 font-bold text-[10px] uppercase tracking-widest">Link URL</div>
+                    </label>
+                    <label class="flex-1 text-center cursor-pointer">
+                        <input type="radio" name="doc_type" value="file" class="hidden peer" onchange="toggleInput('file')">
+                        <div class="py-2 rounded-lg peer-checked:bg-neon-purple peer-checked:text-white transition-all duration-300 font-bold text-[10px] uppercase tracking-widest">Image File</div>
+                    </label>
+                </div>
+
+                <div id="textInput">
+                    <input type="url" id="doc_text" name="doc_text" placeholder="https://external-storage.io/data" class="w-full bg-black border border-neon-cyan/30 p-3 rounded-xl text-neon-cyan text-sm transition-all">
+                </div>
+
+                <div id="fileInput" class="hidden">
+                    <div class="relative group">
+                        <input type="file" id="doc_file" accept="image/*" class="w-full text-xs text-neon-cyan file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-neon-purple file:text-white file:font-bold hover:file:opacity-80 transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full py-4 cyber-button font-bold text-xs">
+                INITIALIZE
+            </button>
+        </form>
+
+        <div id="statusMsg" class="mt-6 p-3 rounded-xl text-center text-[10px] font-bold hidden neon-border uppercase tracking-widest"></div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const recordId = params.get('id');
+
+        document.getElementById('display-id').textContent = recordId;
+        document.getElementById('recordId').value = recordId;
+
+        // Fetch Detail Data via API (GitHub to Google)
+        async function fetchDetails() {
+            if (!recordId) return;
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getSingleData&id=${recordId}`);
+                const data = await response.json();
+                if (data) {
+                    document.getElementById('info-kegiatan').textContent = data.nama_kegiatan;
+                    document.getElementById('info-pic').textContent = data.pic;
+                    document.getElementById('info-harga').textContent = data.harga;
+                    document.getElementById('info-container').classList.remove('hidden');
+                }
+            } catch (e) { 
+                console.error("Signal Lost:", e); 
+            } finally {
+                document.getElementById('loading-info').classList.add('hidden');
+            }
+        }
+
+        function toggleInput(type) {
+            document.getElementById('textInput').classList.toggle('hidden', type !== 'text');
+            document.getElementById('fileInput').classList.toggle('hidden', type !== 'file');
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const msg = document.getElementById('statusMsg');
+            btn.disabled = true; btn.textContent = "TRANSMITTING...";
+            msg.classList.add('hidden');
+
+            const formData = new FormData(this);
+            const payload = new URLSearchParams(formData);
+
+            if (formData.get('doc_type') === 'file') {
+                const file = document.getElementById('doc_file').files[0];
+                if (!file) { 
+                    showStatus("ERROR: NO DATA DETECTED", false);
+                    btn.disabled = false; btn.textContent = "INITIALIZE TRANSMISSION";
+                    return; 
+                }
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    payload.set('file_data', reader.result.split(',')[1]);
+                    payload.set('file_name', file.name);
+                    payload.set('file_type', file.type);
+                    await sendData(payload);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                await sendData(payload);
+            }
+        });
+
+        async function sendData(payload) {
+            const btn = document.getElementById('submitBtn');
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: payload
+                });
+                const result = await response.json();
+                showStatus(result.message, result.result === 'success');
+                if (result.result === 'success') {
+                    btn.textContent = "TRANSMISSION COMPLETE";
+                }
+            } catch (e) {
+                showStatus("COMMUNICATION ERROR", false);
+            } finally {
+                btn.disabled = false;
+                if(btn.textContent !== "TRANSMISSION COMPLETE") btn.textContent = "INITIALIZE TRANSMISSION";
+            }
+        }
+
+        function showStatus(text, isSuccess) {
+            const msg = document.getElementById('statusMsg');
+            msg.textContent = text;
+            msg.classList.remove('hidden');
+            msg.style.borderColor = isSuccess ? '#05d9e8' : '#bc13fe';
+            msg.style.color = isSuccess ? '#05d9e8' : '#bc13fe';
+        }
+
+        window.onload = fetchDetails;
+    </script>
+</body>
+</html>
