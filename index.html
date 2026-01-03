@@ -3,104 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Documentation</title>
+    <title>Upload Documentation | Professional</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
         // --- KONFIGURASI ---
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyIvtckHkcYQae3zjXjxDNvlLCU-U8j-g7cjIhl--CKKdMy_kygnDLMxnvschSPdowbXQ/exec"; 
 
         tailwind.config = {
+            darkMode: 'media', // Otomatis mengikuti setting device
             theme: {
                 extend: {
-                    colors: {
-                        'neon-purple': '#bc13fe',
-                        'neon-cyan': '#05d9e8',
-                        'cyber-bg': '#050505',
-                        'cyber-card': '#0d0d0d'
-                    }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
                 }
             }
         }
     </script>
 
     <style>
-        body {
-            background-color: #050505;
-            font-family: 'Rajdhani', sans-serif;
-            color: #05d9e8;
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 3px 100%;
-            overflow-x: hidden;
+        /* Smooth transition untuk switch dark mode */
+        body { transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        .custom-loader {
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
         }
-
-        .neon-border {
-            border: 1px solid #bc13fe;
-            box-shadow: 0 0 15px rgba(188, 19, 254, 0.5), inset 0 0 10px rgba(188, 19, 254, 0.2);
-        }
-
-        .cyber-button {
-            background: linear-gradient(45deg, #bc13fe, #05d9e8);
-            border: none;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-family: 'Orbitron', sans-serif;
-            color: black;
-        }
-
-        .cyber-button:hover:not(:disabled) {
-            box-shadow: 0 0 20px rgba(5, 217, 232, 0.8);
-            transform: scale(1.02);
-            cursor: pointer;
-        }
-
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            background-size: 100% 4px;
-            z-index: 100;
-            pointer-events: none;
-        }
-
-        .glitch-text {
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 2px 2px #bc13fe, -2px -2px #05d9e8;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #05d9e8 !important;
-            box-shadow: 0 0 10px rgba(5, 217, 232, 0.5);
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="scanlines"></div>
-    
-    <div class="w-full max-w-md bg-cyber-card p-8 rounded-xl neon-border relative z-10">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold glitch-text mb-2 italic">SECURE UPLOAD</h1>
-            <p class="text-[10px] tracking-[0.3em] text-neon-purple opacity-80 uppercase font-bold">ID Node: <span id="display-id" class="text-neon-cyan">...</span></p>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-md bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-800 relative">
+        
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold tracking-tight mb-1">Upload Dokumentasi</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">ID Node: <span id="display-id" class="font-mono font-medium text-indigo-600 dark:text-indigo-400">...</span></p>
         </div>
 
-        <div id="loading-info" class="text-center py-4 italic animate-pulse text-xs">Decrypting Database...</div>
+        <div id="loading-info" class="flex items-center space-x-2 text-sm text-slate-400 mb-6">
+            <span class="custom-loader"></span>
+            <span>Sinkronisasi data...</span>
+        </div>
         
-        <div id="info-container" class="hidden mb-6 space-y-2 text-sm p-4 bg-black/50 rounded-xl border border-neon-cyan/30">
-            <div class="flex justify-between border-b border-neon-cyan/10 pb-1">
-                <span class="opacity-50 text-[10px] uppercase">Kegiatan</span>
-                <span id="info-kegiatan" class="font-bold text-right text-xs"></span>
+        <div id="info-container" class="hidden mb-8 space-y-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
+            <div class="flex flex-col">
+                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Kegiatan</span>
+                <span id="info-kegiatan" class="text-sm font-semibold"></span>
             </div>
-            <div class="flex justify-between border-b border-neon-cyan/10 pb-1">
-                <span class="opacity-50 text-[10px] uppercase">PIC Target</span>
-                <span id="info-pic" class="font-bold text-neon-purple text-xs"></span>
-            </div>
-            <div class="flex justify-between">
-                <span class="opacity-50 text-[10px] uppercase">Budget Code</span>
-                <span id="info-harga" class="font-bold text-xs"></span>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">PIC Target</span>
+                    <span id="info-pic" class="text-sm font-medium text-indigo-600 dark:text-indigo-400"></span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Budget Code</span>
+                    <span id="info-harga" class="text-sm font-medium"></span>
+                </div>
             </div>
         </div>
 
@@ -108,45 +74,52 @@
             <input type="hidden" id="recordId" name="record_id">
             <input type="hidden" name="action" value="uploadDocumentation">
 
-            <div class="space-y-4">
-                <div class="flex items-center space-x-2 bg-gray-900/80 p-1.5 rounded-xl border border-white/5">
-                    <label class="flex-1 text-center cursor-pointer">
-                        <input type="radio" name="doc_type" value="text" checked class="hidden peer" onchange="toggleInput('text')">
-                        <div class="py-2 rounded-lg peer-checked:bg-neon-cyan peer-checked:text-black transition-all duration-300 font-bold text-[10px] uppercase tracking-widest">Link URL</div>
-                    </label>
-                    <label class="flex-1 text-center cursor-pointer">
-                        <input type="radio" name="doc_type" value="file" class="hidden peer" onchange="toggleInput('file')">
-                        <div class="py-2 rounded-lg peer-checked:bg-neon-purple peer-checked:text-white transition-all duration-300 font-bold text-[10px] uppercase tracking-widest">Image File</div>
-                    </label>
-                </div>
+            <div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                <label class="flex-1 text-center cursor-pointer">
+                    <input type="radio" name="doc_type" value="text" checked class="hidden peer" onchange="toggleInput('text')">
+                    <div class="py-2 text-xs font-semibold rounded-md transition-all peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:shadow-sm text-slate-500 peer-checked:text-indigo-600 dark:peer-checked:text-white">
+                        Link URL
+                    </div>
+                </label>
+                <label class="flex-1 text-center cursor-pointer">
+                    <input type="radio" name="doc_type" value="file" class="hidden peer" onchange="toggleInput('file')">
+                    <div class="py-2 text-xs font-semibold rounded-md transition-all peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:shadow-sm text-slate-500 peer-checked:text-indigo-600 dark:peer-checked:text-white">
+                        File Gambar
+                    </div>
+                </label>
+            </div>
 
+            <div class="space-y-4">
                 <div id="textInput">
-                    <input type="url" id="doc_text" name="doc_text" placeholder="https://external-storage.io/data" class="w-full bg-black border border-neon-cyan/30 p-3 rounded-xl text-neon-cyan text-sm transition-all">
+                    <label class="block text-xs font-medium mb-1.5 text-slate-500">Masukkan Link</label>
+                    <input type="url" id="doc_text" name="doc_text" placeholder="https://example.com/file" 
+                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all">
                 </div>
 
                 <div id="fileInput" class="hidden">
-                    <div class="relative group">
-                        <input type="file" id="doc_file" accept="image/*" class="w-full text-xs text-neon-cyan file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-neon-purple file:text-white file:font-bold hover:file:opacity-80 transition-all">
-                    </div>
+                    <label class="block text-xs font-medium mb-1.5 text-slate-500">Pilih Gambar</label>
+                    <input type="file" id="doc_file" accept="image/*" 
+                        class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 dark:file:bg-slate-800 dark:file:text-slate-300 transition-all">
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full py-4 cyber-button font-bold text-xs">
-                INITIALIZE
+            <button type="submit" id="submitBtn" 
+                class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm shadow-lg shadow-indigo-200 dark:shadow-none transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none">
+                SIMPAN DOKUMENTASI
             </button>
         </form>
 
-        <div id="statusMsg" class="mt-6 p-3 rounded-xl text-center text-[10px] font-bold hidden neon-border uppercase tracking-widest"></div>
+        <div id="statusMsg" class="mt-6 p-4 rounded-xl text-center text-xs font-bold hidden border"></div>
     </div>
 
     <script>
+        // --- LOGIKA JAVASCRIPT TETAP SAMA ---
         const params = new URLSearchParams(window.location.search);
         const recordId = params.get('id');
 
-        document.getElementById('display-id').textContent = recordId;
+        document.getElementById('display-id').textContent = recordId || 'Undefined';
         document.getElementById('recordId').value = recordId;
 
-        // Fetch Detail Data via API (GitHub to Google)
         async function fetchDetails() {
             if (!recordId) return;
             try {
@@ -174,7 +147,7 @@
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const msg = document.getElementById('statusMsg');
-            btn.disabled = true; btn.textContent = "TRANSMITTING...";
+            btn.disabled = true; btn.textContent = "SEDANG MENGIRIM...";
             msg.classList.add('hidden');
 
             const formData = new FormData(this);
@@ -183,8 +156,8 @@
             if (formData.get('doc_type') === 'file') {
                 const file = document.getElementById('doc_file').files[0];
                 if (!file) { 
-                    showStatus("ERROR: NO DATA DETECTED", false);
-                    btn.disabled = false; btn.textContent = "INITIALIZE TRANSMISSION";
+                    showStatus("GAGAL: PILIH FILE TERLEBIH DAHULU", false);
+                    btn.disabled = false; btn.textContent = "SIMPAN DOKUMENTASI";
                     return; 
                 }
                 const reader = new FileReader();
@@ -208,15 +181,16 @@
                     body: payload
                 });
                 const result = await response.json();
-                showStatus(result.message, result.result === 'success');
+                showStatus(result.message.toUpperCase(), result.result === 'success');
                 if (result.result === 'success') {
-                    btn.textContent = "TRANSMISSION COMPLETE";
+                    btn.textContent = "BERHASIL DISIMPAN";
+                    btn.classList.replace('bg-indigo-600', 'bg-emerald-600');
                 }
             } catch (e) {
-                showStatus("COMMUNICATION ERROR", false);
+                showStatus("KESALAHAN KOMUNIKASI SERVER", false);
             } finally {
                 btn.disabled = false;
-                if(btn.textContent !== "TRANSMISSION COMPLETE") btn.textContent = "INITIALIZE TRANSMISSION";
+                if(btn.textContent !== "BERHASIL DISIMPAN") btn.textContent = "SIMPAN DOKUMENTASI";
             }
         }
 
@@ -224,8 +198,12 @@
             const msg = document.getElementById('statusMsg');
             msg.textContent = text;
             msg.classList.remove('hidden');
-            msg.style.borderColor = isSuccess ? '#05d9e8' : '#bc13fe';
-            msg.style.color = isSuccess ? '#05d9e8' : '#bc13fe';
+            
+            if(isSuccess) {
+                msg.className = "mt-6 p-4 rounded-xl text-center text-xs font-bold border border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400";
+            } else {
+                msg.className = "mt-6 p-4 rounded-xl text-center text-xs font-bold border border-rose-200 bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:border-rose-800 dark:text-rose-400";
+            }
         }
 
         window.onload = fetchDetails;
