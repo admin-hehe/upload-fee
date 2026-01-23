@@ -9,7 +9,7 @@
     
     <script>
         // --- KONFIGURASI ---
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzPdxOrNH1w2ray36yV6wqjtobcK2_xrvDU2n-earNeSIw3ryfaVDpi0-Zh8isVmRCh3A/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxsaqBNjU9gAoN51EJVfZ6oCf5ni1NzBWHRGI2S204Hna2t5HdiCNwxK_RWs1BmfGt2pw/exec"; 
 
         tailwind.config = {
             darkMode: 'media', // Otomatis mengikuti setting device
@@ -53,22 +53,34 @@
             <span>Sinkronisasi data...</span>
         </div>
         
-        <div id="info-container" class="hidden mb-8 space-y-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800">
-            <div class="flex flex-col">
-                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Kegiatan</span>
-                <span id="info-kegiatan" class="text-sm font-semibold"></span>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="flex flex-col">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">PIC</span>
-                    <span id="info-pic" class="text-sm font-medium text-indigo-600 dark:text-indigo-400"></span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Harga</span>
-                    <span id="info-harga" class="text-sm font-medium"></span>
-                </div>
-            </div>
+<div id="info-container" class="hidden mb-6 p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-sm transition-all duration-500">
+    <div class="text-center mb-5">
+        <p class="text-[8px] uppercase font-black tracking-[0.3em] text-indigo-500/60 mb-1">Activity Name</p>
+        <h2 id="info-kegiatan" class="text-sm font-black text-slate-800 dark:text-slate-100 uppercase leading-tight px-4"></h2>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl flex flex-col justify-center items-center text-center min-h-[55px]">
+            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">PIC</span>
+            <span id="info-pic" class="text-[10px] font-black text-slate-700 dark:text-slate-200 uppercase truncate w-full"></span>
         </div>
+        
+        <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl flex flex-col justify-center items-center text-center min-h-[55px]">
+            <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">Vendor</span>
+            <span id="info-vendor" class="text-[10px] font-black text-slate-700 dark:text-slate-200 uppercase truncate w-full"></span>
+        </div>
+
+        <div class="bg-indigo-50/40 dark:bg-indigo-500/5 p-3 rounded-xl border-b-2 border-indigo-500 flex flex-col justify-center items-center text-center min-h-[55px]">
+            <span class="text-[8px] font-black text-indigo-400 uppercase tracking-widest block mb-1">Brand</span>
+            <span id="info-brand" class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase truncate w-full"></span>
+        </div>
+
+        <div class="bg-emerald-50/40 dark:bg-emerald-500/5 p-3 rounded-xl border-b-2 border-emerald-500 flex flex-col justify-center items-center text-center min-h-[55px]">
+            <span class="text-[8px] font-black text-emerald-500 uppercase tracking-widest block mb-1">Fee Amount</span>
+            <span id="info-harga" class="text-[11px] font-black text-emerald-600 dark:text-emerald-400 truncate w-full"></span>
+        </div>
+    </div>
+</div>
 
         <form id="uploadForm" class="space-y-6">
             <input type="hidden" id="recordId" name="record_id">
@@ -120,23 +132,30 @@
         document.getElementById('display-id').textContent = recordId || 'Undefined';
         document.getElementById('recordId').value = recordId;
 
-        async function fetchDetails() {
-            if (!recordId) return;
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=getSingleData&id=${recordId}`);
-                const data = await response.json();
-                if (data) {
-                    document.getElementById('info-kegiatan').textContent = data.nama_kegiatan;
-                    document.getElementById('info-pic').textContent = data.pic;
-                    document.getElementById('info-harga').textContent = data.harga;
-                    document.getElementById('info-container').classList.remove('hidden');
-                }
-            } catch (e) { 
-                console.error("Signal Lost:", e); 
-            } finally {
-                document.getElementById('loading-info').classList.add('hidden');
-            }
+async function fetchDetails() {
+    if (!recordId) return;
+    try {
+        const response = await fetch(`${WEB_APP_URL}?action=getSingleData&id=${recordId}`);
+        const data = await response.json();
+        
+        if (data && data.result === "success") {
+            document.getElementById('info-kegiatan').textContent = data.nama_kegiatan;
+            document.getElementById('info-pic').textContent = data.pic;
+            document.getElementById('info-brand').textContent = data.brand || '-';
+            document.getElementById('info-vendor').textContent = data.vendor || '-';
+            document.getElementById('info-harga').textContent = data.harga;
+            
+            document.getElementById('info-container').classList.remove('hidden');
+        } else {
+            showStatus("ID NODE TIDAK DITEMUKAN", false);
         }
+    } catch (e) { 
+        console.error("Fetch Error:", e);
+        showStatus("GAGAL LOAD DATA DARI SERVER", false);
+    } finally {
+        document.getElementById('loading-info').classList.add('hidden');
+    }
+}
 
         function toggleInput(type) {
             document.getElementById('textInput').classList.toggle('hidden', type !== 'text');
